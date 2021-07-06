@@ -126,4 +126,6 @@ else:
     wb.save(resultFile)
     print("저장이 완료되었습니다.")
 
+driver.quit()
+
 os.system("pause")
