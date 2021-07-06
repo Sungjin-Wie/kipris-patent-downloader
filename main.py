@@ -10,11 +10,10 @@ from pathlib import Path
 
 chrome_ver = chromedriver_autoinstaller.get_chrome_version().split('.')[0]
 
-# profile = {'savefile.default_directory': os.getcwd(), 'download.default_directory': os.getcwd()}
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-# chrome_options.add_experimental_option('prefs', profile)
+
 try:
     driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver.exe', options=chrome_options)   
 except:
