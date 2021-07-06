@@ -4,28 +4,33 @@ import os, shutil
 import openpyxl
 import pandas as pd
 import datetime
-# import chromedriver_autoinstaller
+import chromedriver_autoinstaller
 
-# chrome_ver = chromedriver_autoinstaller.get_chrome_version().split('.')[0]
-# print(chrome_ver)
+chrome_ver = chromedriver_autoinstaller.get_chrome_version().split('.')[0]
 
-# try:
-#     driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver.exe')   
-# except:
-#     chromedriver_autoinstaller.install(True)
-#     driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver.exe')
+profile = {'savefile.default_directory': os.getcwd(), 'download.default_directory': os.getcwd()}
 
-# driver.implicitly_wait(10)
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+chrome_options.add_experimental_option('prefs', profile)
+try:
+    driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver.exe', options=chrome_options)   
+except:
+    chromedriver_autoinstaller.install(True)
+    driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver.exe', options=chrome_options)
+
+driver.implicitly_wait(10)
 
 
 URL = "http://www.kipris.or.kr/khome/main.jsp"
 interval = 1
 
 keyWord = input("키워드를 입력해주세요: ")
+splitKeyWord = keyWord.split("*")[0]
 now = datetime.datetime.now()
 nowDatetime = now.strftime('%Y-%m-%d-%H-%M-%S')
 
-resultFile = f"result_{keyWord}_{nowDatetime}.xlsx"
+resultFile = f"result_{splitKeyWord}_{nowDatetime}.xlsx"
 print(f"{keyWord}에 관한 내용을 {resultFile}에 저장합니다...")
 
 if not os.path.isfile(resultFile):
@@ -34,7 +39,6 @@ if not os.path.isfile(resultFile):
 else:
     wb = openpyxl.load_workbook(resultFile)
 
-driver = webdriver.Chrome('chromedriver')
 
 driver.get(url=URL)
 time.sleep(interval)
@@ -55,7 +59,6 @@ while searchingText == "검색 중입니다.":
 time.sleep(interval)
 patentSelector = "#resultCountPatent > span"
 totalResults = driver.find_element_by_css_selector(patentSelector).text.replace(",", "")
-print(totalResults)
 if totalResults == "0":
     print("검색 결과가 없습니다.")
 else:
@@ -93,7 +96,7 @@ else:
         driver.find_element_by_css_selector(excelDownloadSelector).click()
         time.sleep(interval)
     
-        filepath = 'C:\\Users\\PC\\Downloads'
+        filepath = os.getcwd()
         filename = max([filepath + '\\' + f for f in os.listdir(filepath)], key=os.path.getctime)
         if os.path.isfile(newFileName):
             os.remove(newFileName)       
