@@ -1,3 +1,4 @@
+from re import split
 from selenium import webdriver
 import time
 import os, shutil
@@ -31,8 +32,12 @@ splitKeyWord = keyWord.split("*")[0]
 now = datetime.datetime.now()
 nowDatetime = now.strftime('%Y-%m-%d-%H-%M-%S')
 
+exceptionKeyWord = input("제외할 키워드를 입력해주세요(없으면 그냥 엔터를 누르세요): ")
+keyWord = keyWord + f"*!{exceptionKeyWord}"
+
 resultFile = f"result_{splitKeyWord}_{nowDatetime}.xlsx"
-print(f"{keyWord}에 관한 내용을 {resultFile}에 저장합니다...")
+exceptionKeyWord = f"({exceptionKeyWord} 제외)" if exceptionKeyWord != "" else exceptionKeyWord
+print(f"{splitKeyWord}에 관한 결과{exceptionKeyWord}를 {resultFile}에 저장합니다...")
 
 if not os.path.isfile(resultFile):
     wb = openpyxl.Workbook()
@@ -99,7 +104,6 @@ else:
     
         filepath = str(os.path.join(Path.home(), "Downloads"))
         filename = max([filepath + '\\' + f for f in os.listdir(filepath)], key=os.path.getctime)
-        print(f"filename:{filename}")
         if os.path.isfile(newFileName):
             os.remove(newFileName)       
         shutil.move(os.path.join(filepath, filename), newFileName)
