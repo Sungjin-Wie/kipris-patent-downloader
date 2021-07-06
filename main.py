@@ -5,14 +5,15 @@ import openpyxl
 import pandas as pd
 import datetime
 import chromedriver_autoinstaller
+from PyQt5 import sip
+from pathlib import Path
 
 chrome_ver = chromedriver_autoinstaller.get_chrome_version().split('.')[0]
 
-profile = {'savefile.default_directory': os.getcwd(), 'download.default_directory': os.getcwd()}
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-chrome_options.add_experimental_option('prefs', profile)
+
 try:
     driver = webdriver.Chrome(f'./{chrome_ver}/chromedriver.exe', options=chrome_options)   
 except:
@@ -96,8 +97,9 @@ else:
         driver.find_element_by_css_selector(excelDownloadSelector).click()
         time.sleep(interval)
     
-        filepath = os.getcwd()
+        filepath = str(os.path.join(Path.home(), "Downloads"))
         filename = max([filepath + '\\' + f for f in os.listdir(filepath)], key=os.path.getctime)
+        print(f"filename:{filename}")
         if os.path.isfile(newFileName):
             os.remove(newFileName)       
         shutil.move(os.path.join(filepath, filename), newFileName)
@@ -125,5 +127,7 @@ else:
         os.remove(newFileName)        
     wb.save(resultFile)
     print("저장이 완료되었습니다.")
+
+driver.quit()
 
 os.system("pause")
